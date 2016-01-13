@@ -3,4 +3,4 @@ This repository contains modules that can be added to the Lockheed Martin Laika 
 
 Current modules
 ---
-meta_olevba.py -- An OLE VBA parser that uses the python-oletools
+meta_olevba.py -- An OLE VBA parser that uses python-oletools
