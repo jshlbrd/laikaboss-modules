@@ -20,3 +20,21 @@ Sample output (BlackEnergy .XLS Dropper 97b7577d13cf5e3bf39cbe6d3f0a7732, 01/201
       ]
     },
 ```
+
+Installation
+---
+* Install python-oletools (http://www.decalage.info/python/oletools)
+* Put meta_olevba.py in directory laikaboss/laikaboss/modules/
+* Modify dispatch.yara to include the module
+```
+rule type_is_msoffice2003
+{
+    meta:
+        scan_modules = "EXPLODE_OLE(minFileSize=128) META_OLEVBA"
+        file_type = "ole"
+    strings:
+        $a = { D0 CF 11 E0 A1 B1 1A E1 }
+    condition:
+        $a at 0
+}
+```
