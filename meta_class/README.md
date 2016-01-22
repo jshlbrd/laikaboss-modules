@@ -1,4 +1,4 @@
-meta_olevba.py
+meta_class.py
 ================
 
 This module parses Java class files and extracts their constants pool tables, provides classes, and requires classes. It uses python-javatools. 
