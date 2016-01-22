@@ -15,7 +15,7 @@
 from laikaboss.si_module import SI_MODULE
 from laikaboss.objectmodel import QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError
 import logging
-from javatools import platform_from_version, unpack_class
+from javatools import unpack_class
 
 
 class META_CLASS(SI_MODULE):
