@@ -7,9 +7,10 @@ python-javatools can be accessed here: https://github.com/obriencj/python-javato
 Sample output
 ```
 "META_MANIFEST": {
-  "Manifest-Version": "1.0",
-  "Created-By": "1.5.0_22 (Sun Microsystems Inc.)"
-}
+          "Main-Class": "com.zero1.SandroRatClient.DroidJack",
+          "Manifest-Version": "1.0",
+          "Class-Path": ". DroidJack_lib/commons-codec-1.6.jar DroidJack_lib/commons-logging-1.1.1.jar DroidJack_lib/fluent-hc-4.2.5.jar DroidJack_lib/httpclient-4.2.5.jar DroidJack_lib/httpclient-cache-4.2.5.jar DroidJack_lib/httpcore-4.2.4.jar DroidJack_lib/httpmime-4.2.5.jar DroidJack_lib/sqljet-1.1.8.jar DroidJack_lib/sqlite-jdbc-3.7.2.jar DroidJack_lib/kryonet-2.21-all.jar DroidJack_lib/quaqua.jar DroidJack_lib/zip4j_1.3.2.jar DroidJack_lib/jaad-0.8.4.jar DroidJack_lib/commons-io-2.4.jar"
+        }
 ```
 
 Installation
