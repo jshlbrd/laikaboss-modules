@@ -13,7 +13,7 @@
 # limitations under the License.
 #
 from laikaboss.si_module import SI_MODULE
-from laikaboss.objectmodel import ModuleObject, ExternalVars
+from laikaboss.objectmodel import ModuleObject, ExternalVars, QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError
 from laikaboss import config
 import tempfile
 import os
