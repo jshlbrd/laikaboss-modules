@@ -30,8 +30,8 @@ Installation
 rule type_is_pdf
 {
     meta:
-	scan_modules = "EXPLODE_PDF(loose=True,force=True)"
-	file_type = "pdf"
+        scan_modules = "EXPLODE_PDF(loose=True,force=True)"
+        file_type = "pdf"
     strings:
         $pdf1 = { 25 50 44 46 2d ?? 2e } // %PDF-.(dot)
         $pdf2 = { 25 50 44 46 2d }
