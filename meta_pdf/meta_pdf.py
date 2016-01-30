@@ -34,36 +34,36 @@ class META_PDF(SI_MODULE):
         metaDict = {}
 
     	if 'force' in args:
-    		force_mode = bool(args['force'])
+            force_mode = bool(args['force'])
     	else:
-    		force_mode = True
+            force_mode = True
 
     	if 'loose' in args:
-    		loose_mode = bool(args['loose'])
+            loose_mode = bool(args['loose'])
     	else:
-    		loose_mode = True
+            loose_mode = True
 
     	with tempfile.NamedTemporaryFile(dir=self.TEMP_DIR) as temp_file:
-    		temp_file_name = temp_file.name
-    		temp_file.write(scanObject.buffer)
-    		temp_file.flush()
+            temp_file_name = temp_file.name
+            temp_file.write(scanObject.buffer)
+            temp_file.flush()
 
-    		try:
-    			pdfparser = PDFParser()
-    			ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
+            try:
+                pdfparser = PDFParser()
+                ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
 
-    			metaDict = pdf.getStats()
+                metaDict = pdf.getStats()
 
                 # Unnecessary fields created by peepdf.
-    			pdf_pop = ['Detection report','Detection','MD5','SHA1','SHA256']
+                pdf_pop = ['Detection report','Detection','MD5','SHA1','SHA256']
 
-    			for key in pdf_pop:
-    				metaDict.pop(key,None)
+                for key in pdf_pop:
+                    metaDict.pop(key,None)
 
-    			for key,val in metaDict.iteritems():
-    				scanObject.addMetadata(self.module_name, key, val)
+                for key,val in metaDict.iteritems():
+                    scanObject.addMetadata(self.module_name, key, val)
 
-    		except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
-    			raise
+            except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
+                raise
 
         return moduleResult
