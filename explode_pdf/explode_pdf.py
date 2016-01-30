@@ -34,45 +34,45 @@ class EXPLODE_PDF(SI_MODULE):
         metaDict = {}
 
         if 'force' in args:
-                force_mode = bool(args['force'])
+            force_mode = bool(args['force'])
         else:
-                force_mode = True
+            force_mode = True
 
         if 'loose' in args:
-                loose_mode = bool(args['loose'])
+            loose_mode = bool(args['loose'])
         else:
-                loose_mode = True
+            loose_mode = True
 
         with tempfile.NamedTemporaryFile(dir=self.TEMP_DIR) as temp_file:
-                temp_file_name = temp_file.name
-                temp_file.write(scanObject.buffer)
-                temp_file.flush()
+            temp_file_name = temp_file.name
+            temp_file.write(scanObject.buffer)
+            temp_file.flush()
 
-                pdfparser = PDFParser()
-                ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
+            pdfparser = PDFParser()
+            ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
 
-                # List of objects to explode.
-                explode_objects = []
+            # List of objects to explode.
+            explode_objects = []
 
-                for versions in pdf.getStats()['Versions']:
-                        if 'Objects with JS code' in versions and versions['Objects with JS code'] != None:
-                                # The list of JS code object references is always the second value in this list.
-                                explode_objects += versions['Objects with JS code'][1]
-                        if 'Elements' in versions and type(versions['Elements']) == dict:
-                                        # The list of Elements contains multiple object references.
-                                        elements_list = ['/EmbeddedFile','/EmbeddedFiles','/Flash']
-                                        for key,val in versions['Elements'].iteritems():
-                                                if key in elements_list:
-                                                        explode_objects += val
+            for versions in pdf.getStats()['Versions']:
+                if versions['Objects with JS code'] != None:
+                    # The list of JS code object references is always the second value in this list.
+                    explode_objects += versions['Objects with JS code'][1]
+                if versions['Elements'] != None:
+                    # The list of Elements contains multiple object references.
+                    elements_list = ['/EmbeddedFile','/EmbeddedFiles','/Flash']
+                    for key,val in versions['Elements'].iteritems():
+                        if key in elements_list:
+                            explode_objects += val
 
-                for object_id in explode_objects:
-                        name = 'stream_' + str(object_id)
-                        pdf_object = pdf.getObject(object_id,None)
-                        if pdf_object.getType() == 'stream':
-                                try:
-                                        moduleResult.append(ModuleObject(buffer=pdf_object.getStream(), externalVars=ExternalVars(filename='e_pdf_%s' % name)))
-                                except:
-                                        scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
-                                        pass
+            for object_id in explode_objects:
+                name = 'stream_' + str(object_id)
+                pdf_object = pdf.getObject(object_id,None)
+                if pdf_object.getType() == 'stream':
+                    try:
+                        moduleResult.append(ModuleObject(buffer=pdf_object.getStream(), externalVars=ExternalVars(filename='e_pdf_%s' % name)))
+                    except:
+                        scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
+                        pass
 
         return moduleResult
