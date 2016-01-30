@@ -3,7 +3,7 @@ explode_pdf.py
 
 This module explodes PDF files and extracts any embedded files, Flash objects, and JavaScript code within the file. It uses peepdf for PDF parsing and object extraction.
 
-Note that extraction can add several seconds to minutes of parsing time for PDF files that contain many object streams. Users have the option to specify force and loose mode for peepdf parsing in the dispatch.yara file. Peepdf can be accessed here: https://github.com/jesparza/peepdf
+Note that extraction can add several seconds to minutes of parsing time for PDF files that contain many object streams. Users have the option to specify force and loose mode for peepdf parsing in the dispatch.yara file (by default, both modes are set to True). Peepdf can be accessed here: https://github.com/jesparza/peepdf
 
 Sample output
 ```
