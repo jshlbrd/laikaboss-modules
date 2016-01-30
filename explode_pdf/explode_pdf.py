@@ -48,31 +48,35 @@ class EXPLODE_PDF(SI_MODULE):
             temp_file.write(scanObject.buffer)
             temp_file.flush()
 
-            pdfparser = PDFParser()
-            ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
+            try:
+                pdfparser = PDFParser()
+                ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
 
-            # List of objects to explode.
-            explode_objects = []
+                # List of objects to explode.
+                explode_objects = []
 
-            for versions in pdf.getStats()['Versions']:
-                if versions['Objects with JS code'] != None:
-                    # The list of JS code object references is always the second value in this list.
-                    explode_objects += versions['Objects with JS code'][1]
-                if versions['Elements'] != None:
-                    # The list of Elements contains multiple object references.
-                    elements_list = ['/EmbeddedFile','/EmbeddedFiles','/Flash']
-                    for key,val in versions['Elements'].iteritems():
-                        if key in elements_list:
-                            explode_objects += val
+                for versions in pdf.getStats()['Versions']:
+                    if versions['Objects with JS code'] != None:
+                        # The list of JS code object references is always the second value in this list.
+                        explode_objects += versions['Objects with JS code'][1]
+                    if versions['Elements'] != None:
+                        # The list of Elements contains multiple object references.
+                        elements_list = ['/EmbeddedFile','/EmbeddedFiles','/Flash']
+                        for key,val in versions['Elements'].iteritems():
+                            if key in elements_list:
+                                explode_objects += val
 
-            for object_id in explode_objects:
-                name = 'stream_' + str(object_id)
-                pdf_object = pdf.getObject(object_id,None)
-                if pdf_object.getType() == 'stream':
-                    try:
-                        moduleResult.append(ModuleObject(buffer=pdf_object.getStream(), externalVars=ExternalVars(filename='e_pdf_%s' % name)))
-                    except:
-                        scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
-                        pass
+                for object_id in explode_objects:
+                    name = 'stream_' + str(object_id)
+                    pdf_object = pdf.getObject(object_id,None)
+                    if pdf_object.getType() == 'stream':
+                        try:
+                            moduleResult.append(ModuleObject(buffer=pdf_object.getStream(), externalVars=ExternalVars(filename='e_pdf_%s' % name)))
+                        except:
+                            scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
+                            pass
+
+    		except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
+    			raise
 
         return moduleResult
