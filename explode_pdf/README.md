@@ -21,9 +21,9 @@ Sample output
 Installation
 ---
 * Mkdir pypackages in directory laikaboss/laikaboss/modules
-* Create empty __init__.py file in directory laikaboss/laikaboss/modules/pypackages
+* Create empty \__init__.py file in directory laikaboss/laikaboss/modules/pypackages
 * Git clone peepdf in directory laikaboss/laikaboss/modules/pypackages
-* Create empty __init__.py file in directory laikaboss/laikaboss/modules/pypackages/peepdf
+* Create empty \__init__.py file in directory laikaboss/laikaboss/modules/pypackages/peepdf
 * Put explode_pdf.py in directory laikaboss/laikaboss/modules
 * Modify dispatch.yara to include the module
 ```
