@@ -76,7 +76,7 @@ class EXPLODE_PDF(SI_MODULE):
                             scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
                             pass
 
-    		except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
-    			raise
+            except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
+            	raise
 
         return moduleResult
