@@ -5,6 +5,8 @@ Current modules
 ---
 explode_pdf.py	-- A PDF exploder that uses peepdf
 
+explode_rtf.py 	-- An RTF exploder that uses python-oletools
+
 meta_class.py	-- A Java class file parser that uses python-javatools
 
 meta_manifest.py -- A Java manifest file parser that uses python-javatools
