@@ -14,29 +14,22 @@
 #
 
 from laikaboss.si_module import SI_MODULE
-from laikaboss.objectmodel import QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError
 from oletools.olevba import VBA_Parser
-import logging
 
 class META_OLEVBA(SI_MODULE):
-	def __init__(self,):
-		self.module_name = "META_OLEVBA"
+    def __init__(self,):
+        self.module_name = "META_OLEVBA"
 
-	def _run(self, scanObject, result, depth, args):
-		moduleResult = []
-		vbap_buffer = VBA_Parser(scanObject.buffer)
+    def _run(self, scanObject, result, depth, args):
+        moduleResult = []
+        vbap_buffer = VBA_Parser(scanObject.buffer)
 
-		try:
-			if vbap_buffer.detect_vba_macros():
-				vbap_result = vbap_buffer.analyze_macros()
-				for kw_type, keyword, description in vbap_result:
-					kw = '%s - %s' % ( keyword,description )
-					scanObject.addMetadata(self.module_name,kw_type,kw)
-		except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
-			raise
-		except:
-			logging.debug("Failed to parse OLEVBA")
+        if vbap_buffer.detect_vba_macros():
+            vbap_result = vbap_buffer.analyze_macros()
+            for kw_type, keyword, description in vbap_result:
+                kw = '%s - %s' % ( keyword,description )
+                scanObject.addMetadata(self.module_name,kw_type,kw)
 
-		vbap_buffer.close()
+        vbap_buffer.close()
 
-		return moduleResult
+        return moduleResult
