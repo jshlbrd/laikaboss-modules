@@ -14,6 +14,7 @@
 #
 
 from laikaboss.si_module import SI_MODULE
+from laikaboss.objectmodel import ScanError
 from oletools.olevba import VBA_Parser
 
 class META_OLEVBA(SI_MODULE):
@@ -22,14 +23,21 @@ class META_OLEVBA(SI_MODULE):
 
     def _run(self, scanObject, result, depth, args):
         moduleResult = []
-        vbap_buffer = VBA_Parser(scanObject.buffer)
 
-        if vbap_buffer.detect_vba_macros():
-            vbap_result = vbap_buffer.analyze_macros()
-            for kw_type, keyword, description in vbap_result:
-                kw = '%s - %s' % ( keyword,description )
-                scanObject.addMetadata(self.module_name,kw_type,kw)
+        try:
+            vbap_buffer = VBA_Parser(scanObject.buffer)
 
-        vbap_buffer.close()
+            if vbap_buffer.detect_vba_macros():
+                vbap_result = vbap_buffer.analyze_macros()
+                for kw_type, keyword, description in vbap_result:
+                    kw = '%s - %s' % ( keyword,description )
+                    scanObject.addMetadata(self.module_name,kw_type,kw)
+
+            vbap_buffer.close()
+
+        except TypeError:
+            scanObject.addFlag('meta_olevba:err:type_error')
+        except ScanError:
+            raise
 
         return moduleResult
