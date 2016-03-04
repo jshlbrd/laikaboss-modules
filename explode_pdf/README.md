@@ -1,9 +1,7 @@
 explode_pdf.py
 ================
 
-This module explodes PDF files and extracts any embedded files, Flash objects, and JavaScript code within the file. It uses peepdf for PDF parsing and object extraction.
-
-Note that extraction can add several seconds to minutes of parsing time for PDF files that contain many object streams. Users have the option to specify force and loose mode for peepdf parsing in the dispatch.yara file (by default, both modes are set to True). Peepdf can be accessed here: https://github.com/jesparza/peepdf
+This module explodes PDF files and extracts any streams within the file. It uses pdfminer for stream extraction.
 
 Sample output
 ```
@@ -20,17 +18,14 @@ Sample output
 
 Installation
 ---
-* Mkdir pypackages in directory laikaboss/laikaboss/modules
-* Create empty \__init__.py file in directory laikaboss/laikaboss/modules/pypackages
-* Git clone peepdf in directory laikaboss/laikaboss/modules/pypackages
-* Create empty \__init__.py file in directory laikaboss/laikaboss/modules/pypackages/peepdf
+* Install pdfminer (https://github.com/euske/pdfminer)
 * Put explode_pdf.py in directory laikaboss/laikaboss/modules
 * Modify dispatch.yara to include the module
 ```
 rule type_is_pdf
 {
     meta:
-        scan_modules = "EXPLODE_PDF(loose=True,force=True)"
+        scan_modules = "EXPLODE_PDF"
         file_type = "pdf"
     strings:
         $pdf1 = { 25 50 44 46 2d ?? 2e } // %PDF-.(dot)

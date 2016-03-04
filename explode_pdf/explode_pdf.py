@@ -13,70 +13,47 @@
 # limitations under the License.
 #
 from laikaboss.si_module import SI_MODULE
-from laikaboss.objectmodel import ModuleObject, ExternalVars, QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError
-from laikaboss import config
-import tempfile
-import os
-from .pypackages.peepdf.PDFCore import PDFParser
+from laikaboss.objectmodel import ModuleObject, ExternalVars, ScanError
+from pdfminer.pdfparser import PDFParser
+from pdfminer.pdfdocument import PDFDocument
+from pdfminer.pdftypes import PDFStream, PDFObjectNotFound
+from pdfminer.psparser import PSEOF
+import cStringIO
 
 class EXPLODE_PDF(SI_MODULE):
     def __init__(self,):
         self.module_name = "EXPLODE_PDF"
-        self.TEMP_DIR = '/tmp/laikaboss_tmp'
-        if hasattr(config, 'tempdir'):
-                self.TEMP_DIR = config.tempdir.rstrip('/')
-        if not os.path.isdir(self.TEMP_DIR):
-                os.mkdir(self.TEMP_DIR)
-                os.chmod(self.TEMP_DIR, 0777)
 
     def _run(self, scanObject, result, depth, args):
         moduleResult = []
-        metaDict = {}
 
-        if 'force' in args:
-            force_mode = bool(args['force'])
-        else:
-            force_mode = True
+        pdfBuffer = cStringIO.StringIO(scanObject.buffer)
 
-        if 'loose' in args:
-            loose_mode = bool(args['loose'])
-        else:
-            loose_mode = True
+        try:
+            pdf = PDFParser(pdfBuffer)
+            pdfDoc = PDFDocument(pdf)
 
-        with tempfile.NamedTemporaryFile(dir=self.TEMP_DIR) as temp_file:
-            temp_file_name = temp_file.name
-            temp_file.write(scanObject.buffer)
-            temp_file.flush()
+            for xref in pdfDoc.xrefs:
+                for objid in xref.get_objids():
+                    try:
+                        obj = pdfDoc.getobj(objid)
+                        if isinstance(obj, dict):
+                            for (key,val) in obj.iteritems():
+                                if key in ['AA','OpenAction']:
+                                    scanObject.addFlag('pdf:nfo:auto_action')
+                                elif key in ['JS','Javascript']:
+                                    scanObject.addFlag('pdf:nfo:js_embedded')
+                        if isinstance(obj, PDFStream):
+                            moduleResult.append(ModuleObject(buffer=obj.get_data(), externalVars=ExternalVars(filename='e_pdf_stream_%s' % objid)))
 
-            try:
-                pdfparser = PDFParser()
-                ret,pdf = pdfparser.parse(temp_file_name, force_mode, loose_mode)
+                    except PDFObjectNotFound:
+                        scanObject.addFlag('pdf:err:missing_object_%s' % objid)
+                    except ScanError:
+                        raise
 
-                # List of objects to explode.
-                explode_objects = []
-
-                for versions in pdf.getStats()['Versions']:
-                    if versions['Objects with JS code'] != None:
-                        # The list of JS code object references is always the second value in this list.
-                        explode_objects += versions['Objects with JS code'][1]
-                    if versions['Elements'] != None:
-                        # The list of Elements contains multiple object references.
-                        elements_list = ['/EmbeddedFile','/EmbeddedFiles','/Flash']
-                        for key,val in versions['Elements'].iteritems():
-                            if key in elements_list:
-                                explode_objects += val
-
-                for object_id in explode_objects:
-                    name = 'stream_' + str(object_id)
-                    pdf_object = pdf.getObject(object_id,None)
-                    if pdf_object.getType() == 'stream':
-                        try:
-                            moduleResult.append(ModuleObject(buffer=pdf_object.getStream(), externalVars=ExternalVars(filename='e_pdf_%s' % name)))
-                        except:
-                            scanObject.addFlag('explode_pdf:err:explode_%s_failed' % name)
-                            pass
-
-            except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
-            	raise
+        except PSEOF:
+            scanObject.addFlag('pdf:err:unexpected_eof')
+        except ScanError:
+            raise
 
         return moduleResult
