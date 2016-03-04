@@ -23,20 +23,23 @@ class META_OLEVBA(SI_MODULE):
 
     def _run(self, scanObject, result, depth, args):
         moduleResult = []
+        vbaDict = {}
 
         try:
             vbap_buffer = VBA_Parser(scanObject.buffer)
 
             if vbap_buffer.detect_vba_macros():
-                vbap_result = vbap_buffer.analyze_macros()
-                for kw_type, keyword, description in vbap_result:
-                    kw = '%s - %s' % ( keyword,description )
-                    scanObject.addMetadata(self.module_name,kw_type,kw)
+                vbap_macro = vbap_buffer.analyze_macros()
+                for kw_type, keyword, description in vbap_macro:
+                    if kw_type not in vbaDict:
+                        vbaDict[kw_type] = [(keyword)]
+                    else:
+                        vbaDict[kw_type].append(keyword)
 
-            vbap_buffer.close()
+            scanObject.addMetadata(self.module_name, 'Artifacts', vbaDict)
 
         except TypeError:
-            scanObject.addFlag('meta_olevba:err:type_error')
+            scanObject.addFlag('olevba:err:type_error')
         except ScanError:
             raise
 
