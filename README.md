@@ -7,11 +7,11 @@ explode_pdf.py -- A PDF exploder that uses peepdf
 
 explode_rtf.py -- An RTF exploder that uses python-oletools
 
-meta_class.py -- A Java class file parser that uses python-javatools
+meta_java_class.py -- A Java class file parser that uses python-javatools
 
 meta_histogram.py -- A textual histogram parser
 
-meta_manifest.py -- A Java manifest file parser that uses python-javatools
+meta_java_manifest.py -- A Java manifest file parser that uses python-javatools
 
 meta_olevba.py -- An OLE VBA parser that uses python-oletools
 
