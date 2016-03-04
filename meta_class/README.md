@@ -1,4 +1,4 @@
-meta_class.py
+meta_java_class.py
 ================
 
 This module parses Java class files and extracts their constants pool tables, provides classes, and requires classes. It uses python-javatools. 
@@ -6,7 +6,7 @@ python-javatools can be accessed here: https://github.com/obriencj/python-javato
 
 Sample output
 ```
-        "META_CLASS": {
+        "META_JAVA_CLASS": {
           "Constants": {
             "50": "jar",
             "57": "java/lang/Exception",
@@ -116,13 +116,13 @@ Sample output
 Installation
 ---
 * Install python-javatools (https://github.com/obriencj/python-javatools)
-* Put meta_class.py in directory laikaboss/laikaboss/modules/
+* Put meta_java_class.py in directory laikaboss/laikaboss/modules/
 * Modify dispatch.yara to include the module
 ```
 rule type_is_java_class
 {
     meta:
-        scan_modules = "META_CLASS"
+        scan_modules = "META_JAVA_CLASS"
         file_type = "class"
     condition:
         uint32(0) == 0xbebafeca

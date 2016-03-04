@@ -13,27 +13,19 @@
 # limitations under the License.
 #
 from laikaboss.si_module import SI_MODULE
-from laikaboss.objectmodel import QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError
-import logging
 from javatools.manifest import Manifest
 
-class META_MANIFEST(SI_MODULE):
+class META_JAVA_MANIFEST(SI_MODULE):
     def __init__(self,):
-        self.module_name = "META_MANIFEST"
+        self.module_name = "META_JAVA_MANIFEST"
 
     def _run(self, scanObject, result, depth, args):
         moduleResult = []
 
-        try:
-            mf = Manifest()
-            mf.parse(scanObject.buffer)
+        mf = Manifest()
+        mf.parse(scanObject.buffer)
 
-            for key,val in mf.items():
-                scanObject.addMetadata(self.module_name, key, val)
-
-        except (QuitScanException, GlobalScanTimeoutError, GlobalModuleTimeoutError):
-            raise
-        except:
-            logging.debug("Failed to parse Java manifest file")
+        for key,val in mf.items():
+            scanObject.addMetadata(self.module_name, key, val)
 
         return moduleResult
