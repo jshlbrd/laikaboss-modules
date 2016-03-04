@@ -14,47 +14,18 @@
 #
 from laikaboss.si_module import SI_MODULE
 from laikaboss.objectmodel import ModuleObject, ExternalVars
-from laikaboss import config
-import tempfile
-import os
 from oletools import rtfobj
 
 class EXPLODE_RTF(SI_MODULE):
-	def __init__(self,):
-		self.module_name = "EXPLODE_RTF"
-		self.TEMP_DIR = '/tmp/laikaboss_tmp'
-		if hasattr(config, 'tempdir'):
-			self.TEMP_DIR = config.tempdir.rstrip('/')
-		if not os.path.isdir(self.TEMP_DIR):
-			os.mkdir(self.TEMP_DIR)
-			os.chmod(self.TEMP_DIR, 0777)
+    def __init__(self,):
+        self.module_name = "EXPLODE_RTF"
 
-	def _run(self, scanObject, result, depth, args):
-		moduleResult = []
+    def _run(self, scanObject, result, depth, args):
+        moduleResult = []
 
-		with tempfile.NamedTemporaryFile(dir=self.TEMP_DIR) as temp_file:
-			temp_file_name = temp_file.name
-			temp_file.write(scanObject.buffer)
-			temp_file.flush()
+        for index, obj_len, obj_data in rtfobj.rtf_iter_objects(scanObject.buffer):
+            # index location of the RTF object becomes the file name
+            name = 'index_' + str(index)
+            moduleResult.append(ModuleObject(buffer=obj_data, externalVars=ExternalVars(filename='e_rtf_%s' % name)))
 
-			# rtfobj v 0.02 has two objects in the rtf iter
-			if rtfobj.__version__ == str(0.02):
-				for index, obj_data in rtfobj.rtf_iter_objects(temp_file_name):
-					name = 'index_' + str(index)
-					try:
-						moduleResult.append(ModuleObject(buffer=obj_data, externalVars=ExternalVars(filename='e_rtf_%s' % name)))
-					except:
-						scanObject.addFlag('explode_rtf:err:explode_%s_failed' % name)
-						pass
-
-			# rtfobj v 0.03 has three objects in the rtf iter
-			elif rtfobj.__version__ == str(0.03):
-				for index, obj_len, obj_data in rtfobj.rtf_iter_objects(temp_file_name):
-					name = 'index_' + str(index)
-					try:
-						moduleResult.append(ModuleObject(buffer=obj_data, externalVars=ExternalVars(filename='e_rtf_%s' % name)))
-					except:
-						scanObject.addFlag('explode_rtf:err:explode_%s_failed' % name)
-						pass
-
-		return moduleResult
+        return moduleResult
