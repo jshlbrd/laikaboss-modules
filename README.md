@@ -15,4 +15,4 @@ meta_java_manifest.py -- A Java manifest file parser that uses python-javatools
 
 meta_olevba.py -- An OLE VBA parser that uses python-oletools
 
-meta_pdf.py -- A PDF parser that uses peepdf
+meta_pdf.py -- A PDF parser that uses pdfminer
