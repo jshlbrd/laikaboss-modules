@@ -44,7 +44,8 @@ class EXPLODE_PDF(SI_MODULE):
                                 elif key in ['JS','Javascript']:
                                     scanObject.addFlag('pdf:nfo:js_embedded')
                         if isinstance(obj, PDFStream):
-                            moduleResult.append(ModuleObject(buffer=obj.get_data(), externalVars=ExternalVars(filename='e_pdf_stream_%s' % objid)))
+                            if 'Type' in obj.attrs and obj.attrs['Type'] == LIT('EmbeddedFile'):
+                                moduleResult.append(ModuleObject(buffer=obj.get_data(), externalVars=ExternalVars(filename='e_pdf_stream_%s' % objid)))
 
                     except PDFObjectNotFound:
                         scanObject.addFlag('pdf:err:missing_object_%s' % objid)
