@@ -22,6 +22,6 @@ class LOG_JSON(SI_MODULE):
     def __init__(self,):
         self.module_name = "LOG_JSON"
     def _run(self, scanObject, result, depth, args):
-        save_path = get_option(args, 'savepath', '/tmp/laika.log')
+        save_path = get_option(args, 'savepath', 'jsonsavepath', '/tmp/laika.log')
         with open(save_path,"ab") as json_out:
             json_out.write(getJSON(result) + "\n")
