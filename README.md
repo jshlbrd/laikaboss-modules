@@ -1,5 +1,7 @@
 # laikaboss-modules
-This repository contains modules that can be added to the Lockheed Martin Laika BOSS framework. See here: https://github.com/lmco/laikaboss
+This repository contains modules that can be added to the Lockheed Martin Laika BOSS framework. See here: https://github.com/lmco/laikaboss.
+
+This repository is not currently actively supported -- consider it an archive.
 
 Current modules
 ---
