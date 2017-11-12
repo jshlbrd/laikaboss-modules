@@ -17,7 +17,7 @@ from laikaboss.objectmodel import ModuleObject, ExternalVars, ScanError
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
 from pdfminer.pdftypes import PDFStream, PDFObjectNotFound
-from pdfminer.psparser import PSEOF
+from pdfminer.psparser import PSEOF, LIT
 import cStringIO
 
 class EXPLODE_PDF(SI_MODULE):
